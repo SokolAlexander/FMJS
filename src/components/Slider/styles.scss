@@ -1,0 +1,18 @@
+.horizontal-slider {
+  height: 100px;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider-thumb {
+  height: 100px;
+  width: 80px;
+  background-color: black;
+}
+
+.slider-track {
+  height: 50px;
+  background-color: green;
+}
