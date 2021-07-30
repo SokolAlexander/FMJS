@@ -5,6 +5,6 @@ import { App } from "./App";
 import './index.styles.scss';
 
 ReactDOM.render(
-  <App userName="Beveloper" lang="TypeScript" />,
+  <App />,
   document.getElementById("root")
 );

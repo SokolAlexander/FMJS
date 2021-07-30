@@ -1,19 +1,10 @@
 import React from "react";
 import { ContextStarter } from "./components/ContextStarter";
-import { Slider } from "./components/Slider";
-import { MuteBtn } from "./components/MuteBtn";
+import { Synth } from "./components/Synth";
 
-export interface HelloWorldProps {
-  userName: string;
-  lang: string;
-}
-export const App = (props: HelloWorldProps) => (
+export const App = () => (
   <>
     <ContextStarter />
-    <Slider />
-    <MuteBtn />
-    <h1>
-      Hi {props.userName} from React! Welcome to {props.lang}!
-    </h1>
+    <Synth />
   </>
 );

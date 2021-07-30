@@ -9,12 +9,16 @@ import {
 } from "mobx";
 
 import audioContext from "../audio/context";
+import { OscillatorData } from "./types";
+import { OscillatorStore } from "./oscillatorStore";
 
 class AudioStore {
   audioCtx = audioContext;
   @observable started = false;
   @observable isMuted = audioContext.muted;
   @observable volume = audioContext.volume;
+  // TODO consider storing it in a map
+  @observable oscillators: OscillatorStore[] = []; // {[id: string]: OscillatorStore} = {};
 
   constructor() {
     makeObservable(this);
@@ -34,6 +38,21 @@ class AudioStore {
   @action
   setVolume = (value: number) => {
     this.volume = value / 100;
+  };
+
+  @action
+  addOscillator = () => {
+    audioStore.oscillators.push(
+      new OscillatorStore(audioContext.addOscillator())
+    );
+  };
+
+  @action
+  removeOscillator = (id: string) => {
+    const oscToRemove = this.oscillators.find(osc => osc.id === id);
+    oscToRemove?.destroy();
+
+    this.oscillators = this.oscillators.filter((osc) => osc.id !== id);
   };
 }
 
@@ -58,7 +77,9 @@ autorun(
 when(
   () => audioStore.started,
   () => {
-    audioContext.start();
+    audioStore.oscillators.push(
+      new OscillatorStore(audioContext.addOscillator())
+    );
   }
 );
 

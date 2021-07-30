@@ -5,16 +5,17 @@ const aCtx = new AudioContext();
 
 class AudioCtx extends BaseAudio {
   private ctx: AudioContext;
-  private oscillators: Oscillator[] = [];
+  private oscillators: { [id: string]: Oscillator } = {};
 
   constructor(context: AudioContext) {
     super(context);
     this.ctx = context;
   }
 
-  start = () => {
+  addOscillator = () => {
     const osc = new Oscillator(this.ctx, this.gain);
-    this.oscillators.push(osc);
+    this.oscillators[osc.id] = osc;
+    return osc;
   }
 }
 

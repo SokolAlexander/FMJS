@@ -1,0 +1,29 @@
+.oscillator-controls {
+  border: 2px solid black;
+  display: flex;
+  justify-content: space-between;
+
+  .mute-btn {
+    flex: 0;
+  }
+
+  .slider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 500px;
+    height: 50px;
+    background-color: green;
+
+    &-thumb {
+      width: 20px;
+      height: 50px;
+      background-color: darkgray;
+    }
+
+    &-track {
+      height: 30px;
+      background-color: red;
+    }
+  }
+}

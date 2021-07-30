@@ -1,6 +1,9 @@
+import { v4 as uuidv4 } from "uuid";
+
 export class BaseAudio {
   protected gain: GainNode;
   protected mute: GainNode;
+  id: string;
 
   constructor(ctx: AudioContext, destination?: AudioNode) {
     this.gain = ctx.createGain();
@@ -10,6 +13,7 @@ export class BaseAudio {
     this.muted = false;
 
     this.gain.connect(this.mute);
+    this.id = uuidv4();
 
     if (destination) {
       this.mute.connect(destination);
