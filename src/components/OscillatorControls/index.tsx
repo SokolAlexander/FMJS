@@ -23,6 +23,9 @@ export const OscillatorControls = observer(
     const handleMute = () => {
       oscillator.mute();
     };
+    const handleChangeVolume = (value: number) => {
+      oscillator.setVolume(value / 100);
+    }
 
     const handleRemove = () => {
       onRemove(oscillator.id);
@@ -53,7 +56,7 @@ export const OscillatorControls = observer(
           thumbClassName="slider-thumb"
           trackClassName="slider-track"
           value={oscillator.volume * 100}
-          onChange={oscillator.setVolume}
+          onChange={handleChangeVolume}
         />
         <h4 onClick={handleRemove}>REMOVE</h4>
       </div>

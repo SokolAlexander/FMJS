@@ -1,0 +1,9 @@
+.draggable {
+  &__bg {
+    width: 600px;
+    height: 400px;
+    background-color: lightyellow;
+    border: 2px solid gray;
+    position: relative;
+  }
+}

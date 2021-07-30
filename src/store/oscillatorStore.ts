@@ -38,7 +38,7 @@ export class OscillatorStore {
 
   @action
   setVolume = (value: number) => {
-    this.volume = value / 100;
+    this.volume = value;
   };
 
   @action
