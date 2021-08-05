@@ -1,12 +1,11 @@
 import React, { useRef, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import audioStore from "../../store/audioStore";
-import { normalize } from "../../utils/normalize";
-import Draggable from "react-draggable";
 import { EnvelopeDot } from "./EnvelopeDot";
+import { OscillatorStore } from "../../store/oscillatorStore";
 
-export const EnvelopeControls = observer(() => {
-  const { oscillators } = audioStore;
+export const EnvelopeControls = observer(({ oscillator }: { oscillator: OscillatorStore }) => {
+  // const { oscillators } = audioStore;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasCtx = useRef<CanvasRenderingContext2D | null>(null);
   const canvasWidth = useRef<number>(400);
@@ -49,9 +48,9 @@ export const EnvelopeControls = observer(() => {
 
     ctx!.moveTo(0, 0);
 
-    oscillators[0].envelopeMtrx.forEach((el, i) => {
+    oscillator.envelopeMtrx.forEach((el, i) => {
       ctx!.lineTo(
-        i * (canvasWidth.current / oscillators[0].envelopeMtrx.length),
+        i * (canvasWidth.current / oscillator.envelopeMtrx.length),
         (1 - el) * canvasHeight.current
       );
     });
@@ -60,29 +59,29 @@ export const EnvelopeControls = observer(() => {
   };
 
   useEffect(() => {
-    if (!oscillators[0]?.envelopeMtrx) {
+    if (!oscillator.envelopeMtrx) {
       return;
     }
 
     drawEnvelope();
-  }, [oscillators[0]?.envelopeMtrx]);
+  }, [oscillator?.envelopeMtrx]);
 
   const onPointMove = (name: string, time: number, value: number) => {
-    oscillators[0]!.setEnvDot(name, { time, value });
+    oscillator!.setEnvDot(name, { time, value });
     drawEnvelope();
   };
 
   const timeCoef = useMemo(
-    () => canvasWidth.current / oscillators[0]?.envelopeMtrx.length,
-    [canvasWidth, oscillators[0]?.envelopeMtrx]
+    () => canvasWidth.current / oscillator?.envelopeMtrx.length,
+    [canvasWidth, oscillator?.envelopeMtrx]
   );
   const gainCoef = useMemo(() => -canvasHeight.current, [canvasHeight]);
 
   const envPoints = useMemo(() => {
-    return oscillators[0]?.envelopeData
-      ? Object.entries(oscillators[0]?.envelopeData)
+    return oscillator?.envelopeData
+      ? Object.entries(oscillator?.envelopeData)
       : [];
-  }, [oscillators[0]?.envelopeData]);
+  }, [oscillator?.envelopeData]);
 
   return (
     <>
@@ -120,19 +119,19 @@ export const EnvelopeControls = observer(() => {
             )
         )}
       </div>
-      {oscillators[0]?.envelope && (
+      {oscillator?.envelope && (
         <>
           <div>
-            {oscillators[0].envelope.attack.time} :
-            {oscillators[0].envelope.attack.value}
+            {oscillator.envelope.attack.time} :
+            {oscillator.envelope.attack.value}
           </div>
           <div>
-            {oscillators[0].envelope.sustain.time} :
-            {oscillators[0].envelope.sustain.value}
+            {oscillator.envelope.sustain.time} :
+            {oscillator.envelope.sustain.value}
           </div>
           <div>
-            {oscillators[0].envelope.release.time} :
-            {oscillators[0].envelope.release.value}
+            {oscillator.envelope.release.time} :
+            {oscillator.envelope.release.value}
           </div>
         </>
       )}

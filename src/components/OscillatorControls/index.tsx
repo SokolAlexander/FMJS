@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 
 import { OscillatorStore } from "../../store/oscillatorStore";
 import { waves } from "../../utils/constants";
-import './styles.scss';
+import "./styles.scss";
 import ReactSlider from "react-slider";
 import { EnvelopeControls } from "../EnvelopeControls";
 
@@ -15,6 +15,11 @@ export const OscillatorControls = observer(
     oscillator: OscillatorStore;
     onRemove: (id: string) => void;
   }) => {
+    const [showEnvelope, setShowEnvelope] = useState(false);
+    const toggleShow = () => {
+      setShowEnvelope((show) => !show);
+    };
+
     const handleChangeFreq = (e: React.ChangeEvent<HTMLInputElement>) => {
       oscillator.setFreq(+e.target.value);
     };
@@ -26,7 +31,7 @@ export const OscillatorControls = observer(
     };
     const handleChangeVolume = (value: number) => {
       oscillator.setVolume(value / 100);
-    }
+    };
 
     const handleRemove = () => {
       onRemove(oscillator.id);
@@ -62,7 +67,8 @@ export const OscillatorControls = observer(
           />
           <h4 onClick={handleRemove}>REMOVE</h4>
         </div>
-        <EnvelopeControls />
+        <div onClick={toggleShow}>{showEnvelope ? "hide eenvelope" : "show envelope"}</div>
+        {showEnvelope && <EnvelopeControls oscillator={oscillator} />}
       </>
     );
   }
