@@ -5,6 +5,7 @@ import { OscillatorStore } from "../../store/oscillatorStore";
 import { waves } from "../../utils/constants";
 import './styles.scss';
 import ReactSlider from "react-slider";
+import { EnvelopeControls } from "../EnvelopeControls";
 
 export const OscillatorControls = observer(
   ({
@@ -32,34 +33,37 @@ export const OscillatorControls = observer(
     };
 
     return (
-      <div className="oscillator-controls">
-        <input
-          type="number"
-          value={oscillator.freq}
-          onChange={handleChangeFreq}
-        />
-        <div
-          style={{ backgroundColor: oscillator.isMuted ? "red" : "white" }}
-          onClick={handleMute}
-        >
-          MUTE
+      <>
+        <div className="oscillator-controls">
+          <input
+            type="number"
+            value={oscillator.freq}
+            onChange={handleChangeFreq}
+          />
+          <div
+            style={{ backgroundColor: oscillator.isMuted ? "red" : "white" }}
+            onClick={handleMute}
+          >
+            MUTE
+          </div>
+          <select onChange={handleChangeWave}>
+            {waves.map((w) => (
+              <option key={w.value} value={w.value}>
+                {w.label}
+              </option>
+            ))}
+          </select>
+          <ReactSlider
+            className="slider"
+            thumbClassName="slider-thumb"
+            trackClassName="slider-track"
+            value={oscillator.volume * 100}
+            onChange={handleChangeVolume}
+          />
+          <h4 onClick={handleRemove}>REMOVE</h4>
         </div>
-        <select onChange={handleChangeWave}>
-          {waves.map((w) => (
-            <option key={w.value} value={w.value}>
-              {w.label}
-            </option>
-          ))}
-        </select>
-        <ReactSlider
-          className="slider"
-          thumbClassName="slider-thumb"
-          trackClassName="slider-track"
-          value={oscillator.volume * 100}
-          onChange={handleChangeVolume}
-        />
-        <h4 onClick={handleRemove}>REMOVE</h4>
-      </div>
+        <EnvelopeControls />
+      </>
     );
   }
 );

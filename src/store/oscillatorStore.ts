@@ -1,8 +1,9 @@
-import { observable, action, makeObservable, autorun } from 'mobx';
+import { observable, action, makeObservable, autorun } from "mobx";
 
-import { waves } from '../utils/constants';
-import audioContext from '../audio/context';
-import { Oscillator } from '../audio/oscillator';
+import { waves } from "../utils/constants";
+import audioContext from "../audio/context";
+import { Oscillator } from "../audio/oscillator";
+import { EnvelopeData } from "./types";
 
 export class OscillatorStore {
   id: string;
@@ -11,6 +12,20 @@ export class OscillatorStore {
   @observable freq = 440;
   @observable volume = 1;
   @observable isMuted = false;
+  @observable envelopeData: EnvelopeData = {
+    attack: {
+      time: 300,
+      value: 1,
+    },
+    sustain: {
+      time: 600,
+      value: 1,
+    },
+    release: {
+      time: 1000,
+      value: 0.1,
+    },
+  };
 
   constructor(osc: Oscillator) {
     makeObservable(this);
@@ -28,6 +43,10 @@ export class OscillatorStore {
     });
     autorun(() => {
       this.osc.muted = this.isMuted;
+    });
+    autorun(() => {
+      this.osc.envelope = this.envelopeData;
+      console.log("autorun");
     });
   }
 
@@ -51,7 +70,28 @@ export class OscillatorStore {
     this.wave = wave;
   };
 
+  @action
+  setEnvelope = (data: EnvelopeData) => {
+    this.envelopeData = data;
+  };
+
+  @action
+  setAttack = (attack: { value: number; time: number }) => {
+    this.envelopeData = {
+      ...this.envelopeData,
+      attack,
+    };
+  };
+
+  get envelopeMtrx() {
+    return this.osc.envelopeMtrx;
+  }
+
+  get envelope() {
+    return this.envelopeData;
+  }
+
   destroy = () => {
     this.osc.destroy();
-  }
+  };
 }

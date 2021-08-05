@@ -9,7 +9,6 @@ import {
 } from "mobx";
 
 import audioContext from "../audio/context";
-import { OscillatorData } from "./types";
 import { OscillatorStore } from "./oscillatorStore";
 
 class AudioStore {
@@ -49,11 +48,19 @@ class AudioStore {
 
   @action
   removeOscillator = (id: string) => {
-    const oscToRemove = this.oscillators.find(osc => osc.id === id);
+    const oscToRemove = this.oscillators.find((osc) => osc.id === id);
     oscToRemove?.destroy();
 
     this.oscillators = this.oscillators.filter((osc) => osc.id !== id);
   };
+
+  // @action
+  // setAttack = (attack: { value: number; time: number }) => {
+  //   this.envelopeData = {
+  //     ...this.envelopeData,
+  //     attack,
+  //   };
+  // };
 }
 
 const audioStore = new AudioStore();
