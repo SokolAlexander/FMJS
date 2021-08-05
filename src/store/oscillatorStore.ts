@@ -76,6 +76,14 @@ export class OscillatorStore {
   };
 
   @action
+  setEnvDot = (name: string, dot: { value: number; time: number }) => {
+    this.envelopeData = {
+      ...this.envelopeData,
+      [name]: dot,
+    };
+  };
+
+  @action
   setAttack = (attack: { value: number; time: number }) => {
     this.envelopeData = {
       ...this.envelopeData,

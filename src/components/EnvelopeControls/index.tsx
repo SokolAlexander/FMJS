@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import audioStore from "../../store/audioStore";
 import { normalize } from "../../utils/normalize";
 import Draggable from "react-draggable";
+import { EnvelopeDot } from "./EnvelopeDot";
 
 export const EnvelopeControls = observer(() => {
   const { oscillators } = audioStore;
@@ -66,52 +67,22 @@ export const EnvelopeControls = observer(() => {
     drawEnvelope();
   }, [oscillators[0]?.envelopeMtrx]);
 
-  const onPointMove = (e: any, data: any) => {
-    console.log("datalasty", data.lastY);
-    const attack = {
-      time:
-        (data.lastX * oscillators[0]!.envelopeMtrx.length) /
-        canvasWidth.current,
-      value: (-data.lastY - 18) / canvasHeight.current,
-    };
-
-    // value = (-data.lastY - 18) / canvasHeight.current,
-    // y = value * height + 18 * -1
-
-    const newEnv = { ...oscillators[0]!.envelope, attack };
-    oscillators[0]!.setAttack(attack);
+  const onPointMove = (name: string, time: number, value: number) => {
+    oscillators[0]!.setEnvDot(name, { time, value });
     drawEnvelope();
   };
 
-  const attackPoint = {
-    x:
-      oscillators[0]?.envelope.attack.time *
-        (canvasWidth.current / oscillators[0]?.envelopeMtrx.length) || 0,
-    y:
-      -(oscillators[0]?.envelope.attack.value || 1) * canvasHeight.current -
-        18 || 0,
-  };
+  const timeCoef = useMemo(
+    () => canvasWidth.current / oscillators[0]?.envelopeMtrx.length,
+    [canvasWidth, oscillators[0]?.envelopeMtrx]
+  );
+  const gainCoef = useMemo(() => -canvasHeight.current, [canvasHeight]);
 
-  const bounds = useMemo(() => {
-    console.log("reboundds");
-    return {
-      left: canvasLeft.current + 1,
-      top: -canvasHeight.current - 18,
-      bottom: -18,
-      right:
-        (oscillators[0]?.envelope.sustain.time || 600) *
-          (canvasWidth.current /
-            (oscillators[0]?.envelopeMtrx.length || 1000)) -
-          10 || 0,
-    };
-  }, [
-    canvasHeight.current,
-    canvasBottom.current,
-    canvasHeight.current,
-    canvasWidth.current,
-    oscillators[0],
-  ]);
-  console.log('canvastop', canvasTop.current);
+  const envPoints = useMemo(() => {
+    return oscillators[0]?.envelopeData
+      ? Object.entries(oscillators[0]?.envelopeData)
+      : [];
+  }, [oscillators[0]?.envelopeData]);
 
   return (
     <>
@@ -130,11 +101,24 @@ export const EnvelopeControls = observer(() => {
           height="300px"
           ref={canvasRef}
         />
-        <Draggable bounds={bounds} position={attackPoint} onStop={onPointMove}>
-          <div
-            style={{ width: "10px", height: "10px", border: "2px solid red" }}
-          />
-        </Draggable>
+        {envPoints.map(
+          ([key, point], i) =>
+            i !== envPoints.length - 1 && (
+              <EnvelopeDot
+                point={point}
+                prevPoint={envPoints[i - 1]?.[1] || null}
+                nextPoint={envPoints[i + 1]?.[1] || null}
+                parentHeight={canvasHeight.current}
+                parentLeft={canvasLeft.current}
+                parentRight={canvasRight.current}
+                timeCoef={timeCoef}
+                gainCoef={gainCoef}
+                onMove={onPointMove}
+                key={i}
+                name={key}
+              />
+            )
+        )}
       </div>
       {oscillators[0]?.envelope && (
         <>
