@@ -102,7 +102,7 @@ export const EnvelopeControls = observer(({ oscillator }: { oscillator: Oscillat
         />
         {envPoints.map(
           ([key, point], i) =>
-            i !== envPoints.length - 1 && (
+            (
               <EnvelopeDot
                 point={point}
                 prevPoint={envPoints[i - 1]?.[1] || null}

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, forwardRef } from "react";
 import { observer } from "mobx-react";
 import Draggable from "react-draggable";
+import clns from "classnames";
 
 import "./styles.scss";
 import audioStore from "../../store/audioStore";
@@ -12,11 +13,14 @@ const DragOscillator = ({ onMove, osc, bounds }: Props) => {
   const maxX = useRef(1);
   const maxY = useRef(1);
 
-  const { normalize: normFreq, denormalize: denormFreq } = useNormalize(0, maxY.current);
+  const { normalize: normFreq, denormalize: denormFreq } = useNormalize(
+    0,
+    maxY.current
+  );
 
   const handleMove = (e: any, data: any) => {
     osc.setVolume(data.lastX / maxX.current!);
-    
+
     const normalized = normFreq(maxY.current - data.lastY);
     osc.setFreq(normalized);
   };
@@ -44,7 +48,14 @@ const DragOscillator = ({ onMove, osc, bounds }: Props) => {
         y: maxY.current - denormFreq(osc.freq),
       }}
     >
-      <div ref={dragRef} className="draggable__item">
+      <div
+        ref={dragRef}
+        className={clns([
+          "draggable__item",
+          osc.isConnectedToOut && "connected",
+          osc.isMuted && "muted",
+        ])}
+      >
         01
       </div>
     </Draggable>

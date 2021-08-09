@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import ReactSlider from "react-slider";
 
 import { OscillatorStore } from "../../store/oscillatorStore";
 import { waves } from "../../utils/constants";
 import "./styles.scss";
-import ReactSlider from "react-slider";
 import { EnvelopeControls } from "../EnvelopeControls";
+import { OscillatorConnections } from "../OscConnections";
 
 export const OscillatorControls = observer(
   ({
@@ -16,9 +17,13 @@ export const OscillatorControls = observer(
     onRemove: (id: string) => void;
   }) => {
     const [showEnvelope, setShowEnvelope] = useState(false);
-    const toggleShow = () => {
+    const [showConnections, setShowConnections] = useState(false);
+    const toggleShowEnv = () => {
       setShowEnvelope((show) => !show);
     };
+    const toggleShowConnections = () => {
+      setShowConnections(prev => !prev);
+    }
 
     const handleChangeFreq = (e: React.ChangeEvent<HTMLInputElement>) => {
       oscillator.setFreq(+e.target.value);
@@ -67,8 +72,14 @@ export const OscillatorControls = observer(
           />
           <h4 onClick={handleRemove}>REMOVE</h4>
         </div>
-        <div onClick={toggleShow}>{showEnvelope ? "hide eenvelope" : "show envelope"}</div>
+        <div onClick={toggleShowEnv}>
+          {showEnvelope ? "hide envelope" : "show envelope"}
+        </div>
         {showEnvelope && <EnvelopeControls oscillator={oscillator} />}
+        <div onClick={toggleShowConnections}>
+          {showConnections ? "hide connections" : "show connections"}
+        </div>
+        {showConnections && <OscillatorConnections oscillator={oscillator} />}
       </>
     );
   }

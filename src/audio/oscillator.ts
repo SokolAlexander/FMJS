@@ -4,7 +4,10 @@ import { EnvelopeData } from "../store/types";
 // accessing oscillator should be only through AudioCtx class;
 export class Oscillator extends BaseAudio {
   private osc: OscillatorNode;
+  private dest: AudioNode;
   private envelopeGain: GainNode;
+  // for modifying modulation of other oscs
+  private modGain: GainNode;
   private envelopeData: EnvelopeData = {
     attack: {
       time: 300,
@@ -27,12 +30,19 @@ export class Oscillator extends BaseAudio {
 
     this.osc = ctx.createOscillator();
     this.envelopeGain = ctx.createGain();
+    this.modGain = ctx.createGain();
     this.osc.connect(this.envelopeGain);
     this.envelopeGain.connect(this.gain);
+    this.envelopeGain.connect(this.modGain);
+
+    this.dest = destination;
 
     this.osc.start();
     this.createEnvMatrix();
     this.startEnvInterval();
+
+    // TODO this is just a simple test
+    this.modGain.gain.value = 3000;
   }
 
   private createEnvMatrix() {
@@ -128,4 +138,37 @@ export class Oscillator extends BaseAudio {
     // delete this.osc;
     // delete this.mute;
   };
+
+  connectToOut() {
+    this.mute.connect(this.dest);
+  }
+
+  connectToOsc(destOsc: OscillatorNode) {
+    console.log('connecting to osc', destOsc);
+    // destOsc.detune.value = 100;
+
+    this.modGain.connect(destOsc.detune);
+  }
+
+  disconnectOut() {
+    this.mute.disconnect(this.dest);
+  }
+
+  disconnectOsc(destOsc: OscillatorNode) {
+    // destOsc.detune.value = 0;
+
+    this.modGain.disconnect(destOsc.detune);
+  }
+
+  get oscNode() {
+    return this.osc;
+  }
+
+  set modIndex(value: number) {
+    this.modGain.gain.value = value;
+  }
+
+  get modIndex() {
+    return this.modGain.gain.value;
+  }
 }

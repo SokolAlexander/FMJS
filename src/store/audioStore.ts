@@ -54,13 +54,40 @@ class AudioStore {
     this.oscillators = this.oscillators.filter((osc) => osc.id !== id);
   };
 
-  // @action
-  // setAttack = (attack: { value: number; time: number }) => {
-  //   this.envelopeData = {
-  //     ...this.envelopeData,
-  //     attack,
-  //   };
-  // };
+  @action
+  connect = (oscId: string, destOscId?: string) => {
+    const osc = this.oscillators.find(({ id }) => id === oscId);
+
+    if (!osc) {
+      return
+    }
+
+    if (!destOscId) {
+      osc.connect();
+      return
+    }
+
+    const destOsc = this.oscillators.find(({ id }) => id === destOscId);
+    osc.connect(destOsc);
+  }
+
+  @action
+  disconnect = (oscId: string, destOscId?: string) => {
+    console.log('oscId', oscId);
+    const osc = this.oscillators.find(({ id }) => id === oscId);
+
+    if (!osc) {
+      return
+    }
+
+    if (!destOscId) {
+      osc.disconnect();
+      return
+    }
+
+    const destOsc = this.oscillators.find(({ id }) => id === destOscId);
+    osc.disconnect(destOsc);
+  }
 }
 
 const audioStore = new AudioStore();

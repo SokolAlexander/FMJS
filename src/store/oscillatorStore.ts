@@ -1,7 +1,6 @@
 import { observable, action, makeObservable, autorun } from "mobx";
 
 import { waves } from "../utils/constants";
-import audioContext from "../audio/context";
 import { Oscillator } from "../audio/oscillator";
 import { EnvelopeData } from "./types";
 
@@ -12,6 +11,8 @@ export class OscillatorStore {
   @observable freq = 440;
   @observable volume = 1;
   @observable isMuted = false;
+  @observable connections: string[] = [];
+  @observable isConnectedToOut = true;
   @observable envelopeData: EnvelopeData = {
     attack: {
       time: 300,
@@ -89,6 +90,34 @@ export class OscillatorStore {
       ...this.envelopeData,
       attack,
     };
+  };
+
+  @action
+  connect = (osc?: OscillatorStore) => {
+    if (!osc && !this.isConnectedToOut) {
+      this.osc.connectToOut();
+      this.isConnectedToOut = true;
+    }
+
+    if (osc) {
+      this.osc.connectToOsc(osc.osc.oscNode);
+
+      this.connections.push(osc.id);
+    }
+  };
+
+  @action
+  disconnect = (osc?: OscillatorStore) => {
+    if (!osc && this.isConnectedToOut) {
+      this.osc.disconnectOut();
+      this.isConnectedToOut = false;
+    }
+
+    if (osc) {
+      this.osc.disconnectOsc(osc.osc.oscNode);
+
+      this.connections = this.connections.filter((id) => id !== osc.id);
+    }
   };
 
   get envelopeMtrx() {

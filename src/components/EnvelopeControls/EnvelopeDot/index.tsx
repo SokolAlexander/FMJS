@@ -59,7 +59,7 @@ export const EnvelopeDot = (props: Props) => {
   );
 
   return (
-    <Draggable bounds={bounds} position={position} onStop={handleStop}>
+    <Draggable bounds={bounds} position={position} onStop={handleStop} axis={nextPoint ? 'both' : 'y'}>
       <div style={{ width: "10px", height: "10px", border: "2px solid red" }} />
     </Draggable>
   );
